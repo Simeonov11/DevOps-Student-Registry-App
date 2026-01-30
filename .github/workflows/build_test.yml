@@ -6,6 +6,8 @@ name: Build and test Node.js Application
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   build_and_test:
@@ -24,8 +26,26 @@ jobs:
     - name: Run tests
       run: npm test
 
-  deploy:
+  run_npm_security_scan:
+    name: NPM Audit Scan for Vulnerabilities
     needs: build_and_test
+    runs-on: unbuntu-latest
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v4
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm install
+      - name: Run security scan with npm audit
+        run: npm audit --audit-level=high
+
+  deploy:
+    needs: run_npm_security_scan
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to Render
