@@ -11,7 +11,7 @@ on:
 
 jobs:
   build_and_test:
-
+    # if no name the job takes upper lane as name
     runs-on: ubuntu-latest
     steps:
     - name: Checkout the code
@@ -27,6 +27,7 @@ jobs:
       run: npm test
 
   run_npm_security_scan:
+
     needs: build_and_test
     runs-on: ubuntu-latest
     steps:
@@ -43,6 +44,7 @@ jobs:
         run: npm audit --audit-level=high
 
   deploy:
+
     needs: run_npm_security_scan
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
