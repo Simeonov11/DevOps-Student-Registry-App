@@ -28,7 +28,7 @@ jobs:
 
   run_npm_security_scan:
     needs: build_and_test
-    runs-on: unbuntu-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout the code
         uses: actions/checkout@v4
